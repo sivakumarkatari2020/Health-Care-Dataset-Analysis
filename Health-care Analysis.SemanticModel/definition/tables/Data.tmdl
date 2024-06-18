@@ -1,0 +1,175 @@
+table Data
+	lineageTag: bf430053-3259-4f3a-9330-ac3a1cfa4638
+
+	column Name
+		dataType: string
+		lineageTag: f55f47fc-c64f-442a-a554-db5a60cc6977
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age
+		dataType: int64
+		formatString: 0
+		lineageTag: d9ca62e9-7117-414b-a3f5-383e1f57da72
+		summarizeBy: sum
+		sourceColumn: Age
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		lineageTag: d211ba88-2f35-4eab-8f77-d58222f869ff
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Blood Type'
+		dataType: string
+		lineageTag: 6b58f49c-d1dd-456d-87f6-286d0db88b4a
+		summarizeBy: none
+		sourceColumn: Blood Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Medical Condition'
+		dataType: string
+		lineageTag: 7dc51909-f917-4690-ab30-3ef955f59b31
+		summarizeBy: none
+		sourceColumn: Medical Condition
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date of Admission'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8dfdce31-9738-449c-921f-fe752d70236f
+		summarizeBy: none
+		sourceColumn: Date of Admission
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Doctor
+		dataType: string
+		lineageTag: 31dfa73d-90c2-4f75-a096-e7f0a7ba7540
+		summarizeBy: none
+		sourceColumn: Doctor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hospital
+		dataType: string
+		lineageTag: d61f701a-b6a4-44ee-8cc9-2bb126abf4c2
+		summarizeBy: none
+		sourceColumn: Hospital
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Insurance Provider'
+		dataType: string
+		lineageTag: 778102e6-77b3-4141-93d2-c546e7c5264c
+		summarizeBy: none
+		sourceColumn: Insurance Provider
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Amount'
+		dataType: double
+		lineageTag: a69eb2f1-ad2a-4cfc-8fd1-22e4aff07a5b
+		summarizeBy: sum
+		sourceColumn: Billing Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Room Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: bf31397f-ff62-4a11-a80b-9e74c507ca54
+		summarizeBy: sum
+		sourceColumn: Room Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Admission Type'
+		dataType: string
+		lineageTag: 016b796f-27f4-4adf-b97e-14e6508d4baa
+		summarizeBy: none
+		sourceColumn: Admission Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Discharge Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f4d9dd12-977a-4dc2-9f45-e486730cc732
+		summarizeBy: none
+		sourceColumn: Discharge Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Medication
+		dataType: string
+		lineageTag: 8d69d0b8-79bc-46c7-be4c-09c602d4cf8e
+		summarizeBy: none
+		sourceColumn: Medication
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Test Results'
+		dataType: string
+		lineageTag: 517956fe-d071-455a-ad4f-afde9a4f3a2e
+		summarizeBy: none
+		sourceColumn: Test Results
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Age Groups' =
+			
+			IF(
+			    Data[Age] < 18,
+			    "0-18",
+			    IF(
+			        Data[Age] >= 18 && Data[Age] < 35,
+			        "18-35",
+			        IF(
+			            Data[Age] >= 35 && Data[Age] < 65,
+			            "35-65",
+			            IF(
+			                Data[Age] >= 65,
+			                "Above 65",
+			                BLANK()
+			            )
+			        )
+			    )
+			)
+		dataType: string
+		lineageTag: 1d35ae57-953f-4a5c-bb1f-f5097614192e
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Data = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\ganap\OneDrive\Documents\Siva Workspace\PBI\Healthcare-Dataset\Data\healthcare_dataset.csv"),[Delimiter=",", Columns=15, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Name", type text}, {"Age", Int64.Type}, {"Gender", type text}, {"Blood Type", type text}, {"Medical Condition", type text}, {"Date of Admission", type date}, {"Doctor", type text}, {"Hospital", type text}, {"Insurance Provider", type text}, {"Billing Amount", type number}, {"Room Number", Int64.Type}, {"Admission Type", type text}, {"Discharge Date", type date}, {"Medication", type text}, {"Test Results", type text}})
+				in
+				    #"Changed Type"
+
+	changedProperty = Name
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

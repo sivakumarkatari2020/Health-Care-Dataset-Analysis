@@ -1,0 +1,8 @@
+relationship 0a9f1dd1-d153-1147-6c80-8865d52fc96a
+	fromColumn: Data.'Date of Admission'
+	toColumn: Calendar.Date
+
+relationship 4bc97757-680f-1582-7298-51f026d7b458
+	fromColumn: Data.'Discharge Date'
+	toColumn: 'Discharge Calendar'.Date
+

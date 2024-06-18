@@ -1,0 +1,23 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBIDesktopVersion = 2.130.754.0 (24.06)
+
+annotation PBI_QueryOrder = ["Data","Measures Table"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Data
+ref table 'Measures Table'
+ref table Calendar
+ref table 'Discharge Calendar'
+
+ref cultureInfo en-US
+

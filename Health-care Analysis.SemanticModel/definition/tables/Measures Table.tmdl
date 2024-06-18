@@ -1,0 +1,342 @@
+table 'Measures Table'
+	lineageTag: 3a5beb89-bb43-47d1-9bf7-b0cca979293c
+
+	measure 'Total Patients' =
+			
+			COUNTROWS(Data)
+		formatString: 0
+		lineageTag: 26e3ed3f-d0b5-40fc-9fe1-4dbb08429aa6
+
+	measure 'Total Males' =
+			
+			CALCULATE(
+			    COUNT(Data[Name]),
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Male"
+			    )
+			)
+		formatString: 0
+		lineageTag: e3fc3592-40bc-498c-b9a8-d3168a54d9a1
+
+	measure 'Total Females' =
+			
+			CALCULATE(
+			    COUNT(Data[Name]),
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Female"
+			    )
+			)
+		formatString: 0
+		lineageTag: ea0e14b1-3c62-480d-87bf-e379c79ccd1a
+
+	measure 'Total Amount' =
+			
+			SUM(Data[Billing Amount])
+		lineageTag: 85c7bddc-64b6-4edf-aaec-e1bad944545a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PatientCountByMedication =
+			
+			CALCULATE(
+			    COUNT(Data[Name]),
+			    ALLEXCEPT(Data, Data[Medication])
+			)
+		formatString: 0
+		lineageTag: 7d2c5c5a-0368-4b72-9371-7c1cd255995f
+
+	measure PatientCountByMedicalCondition =
+			
+			CALCULATE(
+			    COUNT(Data[Name]),
+			    ALLEXCEPT(Data, Data[Medical Condition])
+			)
+		formatString: 0
+		lineageTag: 738abbce-d483-4b20-8941-8fe81985a2df
+
+	measure 'Average Billing Amount' =
+			
+			ROUND(
+			    AVERAGE(
+			        Data[Billing Amount]
+			    ),
+			    2
+			)
+		displayFolder: Distributions
+		lineageTag: b57b3cfe-d02c-4589-8f0d-bb8e4825ecc1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Recovery Rate' =
+			
+			AVERAGEX(
+			    Data,
+			    ABS(DATEDIFF(Data[Date of Admission], Data[Discharge Date], DAY))
+			)
+		displayFolder: Distributions
+		lineageTag: b898128b-5edd-46f7-ad85-ac3f02a6ce0b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Emergency Cases' =
+			
+			CALCULATE(
+			    COUNT(Data[Name]),
+			    FILTER(
+			        Data,
+			        Data[Admission Type] = "Emergency"
+			    )
+			)
+		formatString: 0
+		displayFolder: Distributions
+		lineageTag: d8046746-015b-4698-9488-b7acd742ecee
+
+	measure 'Female Average Recovery Rate' =
+			
+			CALCULATE(
+			    [Average Recovery Rate],
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Female"
+			    )
+			)
+		displayFolder: Distributions
+		lineageTag: 419232af-0d14-473f-abcc-5573c8749d93
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Female Billing Amount' =
+			
+			CALCULATE(
+			    [Total Amount],
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Female"
+			    )
+			)
+		displayFolder: Distributions
+		lineageTag: c67ecabf-37e6-432f-a373-e9a339adc2e8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Female Emergency Cases' =
+			
+			CALCULATE(
+			    [Emergency Cases],
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Female"
+			    )
+			)
+		formatString: 0
+		displayFolder: Distributions
+		lineageTag: ce17e159-2fcd-45c8-98c7-5f79d4778a41
+
+	measure 'Male Average Recovery Rate' =
+			
+			CALCULATE(
+			    [Average Recovery Rate],
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Male"
+			    )
+			)
+		displayFolder: Distributions
+		lineageTag: 9c34e8fa-0934-422a-b666-8a35ed7099c9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Male Billing Amount' =
+			
+			CALCULATE(
+			    [Total Amount],
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Male"
+			    )
+			)
+		displayFolder: Distributions
+		lineageTag: 6496e38f-0fb9-4443-9a6c-7fbd75aaf64d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Male Emergency Cases' =
+			
+			CALCULATE(
+			    [Emergency Cases],
+			    FILTER(
+			        Data,
+			        Data[Gender] = "Male"
+			    )
+			)
+		formatString: 0
+		displayFolder: Distributions
+		lineageTag: e21e9e56-e4d1-4f5b-80ac-69ace87f6d5c
+
+	measure PatientCountByInsurerAndAgeGroup =
+			
+			CALCULATE(
+			    COUNT(Data[Name]),
+			    ALLEXCEPT(Data, Data[Insurance Provider], Data[Age Groups])
+			)
+		formatString: 0
+		displayFolder: Favourable Insurers By Age Group
+		lineageTag: 57614ab2-2f13-4d20-b87c-3c190b547b71
+
+	measure MaxPatientCountByInsurerInAgeGroup =
+			
+			CALCULATE(
+			    MAXX(
+			        VALUES(Data[Insurance Provider]),
+			        [PatientCountByInsurerAndAgeGroup]
+			    ),
+			    ALLEXCEPT(Data, Data[Age Groups], Data[Insurance Provider])
+			)
+		formatString: 0
+		displayFolder: Favourable Insurers By Age Group
+		lineageTag: 032e4e3f-9972-405c-991d-bdea438e591f
+
+	measure FavourableInsurerByAgeGroup =
+			
+			VAR MaxCount = [MaxPatientCountByInsurerInAgeGroup]
+			RETURN
+			MAXX(
+			    FILTER(
+			        VALUES(Data[Insurance Provider]),
+			        [PatientCountByInsurerAndAgeGroup] = MaxCount
+			    ),
+			    Data[Insurance Provider]
+			)
+		displayFolder: Favourable Insurers By Age Group
+		lineageTag: 3d12f1ca-9541-4c39-ba59-beefaf85e782
+
+	measure BillingAmountByDiseaseAndInsurer =
+			
+			CALCULATE(
+			    SUM(Data[Billing Amount]),
+			    ALLEXCEPT(Data, Data[Medical Condition], Data[Insurance Provider], Data[Age Groups])
+			)
+		displayFolder: Major Disease By Insurer
+		lineageTag: 534c6e03-9a34-4de4-97f5-5ff62facf7bd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MaxBillingAmountByDiseaseAndInsurer =
+			
+			CALCULATE(
+			    MAXX(
+			        VALUES(Data[Medical Condition]),
+			        [BillingAmountByDiseaseAndInsurer]
+			    ),
+			    ALLEXCEPT(Data, Data[Insurance Provider], Data[Age Groups])
+			)
+		displayFolder: Major Disease By Insurer
+		lineageTag: 02774f06-4ee8-40a8-9e58-370e1a093b78
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MajorDiseaseByInsurer =
+			
+			VAR MaxAmount = [MaxBillingAmountByDiseaseAndInsurer]
+			RETURN
+			MAXX(
+			    FILTER(
+			        VALUES(Data[Medical Condition]),
+			        [BillingAmountByDiseaseAndInsurer] = MaxAmount
+			    ),
+			    Data[Medical Condition]
+			)
+		displayFolder: Major Disease By Insurer
+		lineageTag: 04cc914d-cfcd-4bca-bcf0-0c7ebe0d59dc
+
+	measure PatientCountByDiseaseAndAgeGroup =
+			
+			CALCULATE(
+			    COUNT(Data[Name]),
+			    ALLEXCEPT(Data, Data[Medical Condition], Data[Age Groups], Data[Insurance Provider])
+			)
+		formatString: 0
+		displayFolder: Major Disease For Age Groups
+		lineageTag: c88d7819-1f29-4c9b-8805-1145cb38d285
+
+	measure MaxPatientCountInAgeGroup =
+			
+			CALCULATE(
+			    MAXX(
+			        VALUES(Data[Medical Condition]),
+			        [PatientCountByDiseaseAndAgeGroup]
+			    ),
+			    ALLEXCEPT(Data, Data[Age Groups], Data[Insurance Provider])
+			)
+		formatString: 0
+		displayFolder: Major Disease For Age Groups
+		lineageTag: abe975de-614e-4edb-8727-3a7253f771c1
+
+	measure MajorDiseaseByAgeGroup =
+			
+			VAR MaxCount = [MaxPatientCountInAgeGroup]
+			RETURN
+			MAXX(
+			    FILTER(
+			        VALUES(Data[Medical Condition]),
+			        [PatientCountByDiseaseAndAgeGroup] = MaxCount
+			    ),
+			    Data[Medical Condition]
+			)
+		displayFolder: Major Disease For Age Groups
+		lineageTag: 76632aee-341a-4fe1-bf5e-a36f9145d0bb
+
+	measure BillingOfInsurers =
+			
+			CALCULATE(
+			    SUM(Data[Billing Amount]),
+			    ALLEXCEPT(Data, Data[Insurance Provider], Data[Age Groups])
+			)
+		displayFolder: Major Insurer By Billing Amount
+		lineageTag: e8e9be66-9e93-4487-b38f-f78659a5ad29
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MaxBillingOfInsurers =
+			
+			CALCULATE(
+			    MAXX(
+			        VALUES(Data[Insurance Provider]),
+			        [BillingOfInsurers]
+			    ),
+			    ALLEXCEPT(Data, Data[Insurance Provider], Data[Age Groups])
+			)
+		displayFolder: Major Insurer By Billing Amount
+		lineageTag: d3ccf937-7878-4017-917d-fff2a1366a4d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MajorInsurerByBillingAmount =
+			
+			VAR MaxCount = [MaxBillingOfInsurers]
+			RETURN
+			MAXX(
+			    FILTER(
+			        VALUES(Data[Insurance Provider]),
+			        [BillingOfInsurers] = MaxCount
+			    ),
+			    Data[Insurance Provider]
+			)
+		displayFolder: Major Insurer By Billing Amount
+		lineageTag: b7f7d7a7-f1f3-431e-8a93-d4e0b25599da
+
+	partition 'Measures Table' = m
+		mode: import
+		source =
+				let
+				    Source = "Measures Table",
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"Measures Table"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

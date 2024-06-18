@@ -1,0 +1,118 @@
+table 'Discharge Calendar'
+	lineageTag: cf97dee8-58ba-40c4-ab09-93eca4adf38b
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 78ebcb12-f723-442e-9157-d1308d71e039
+		summarizeBy: none
+		isNameInferred
+		isDataTypeInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day =
+			
+			DAY('Discharge Calendar'[Date])
+		dataType: int64
+		formatString: 0
+		lineageTag: 39d9fb11-b313-4bcc-aa99-130be4e0ba87
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month =
+			
+			MONTH('Discharge Calendar'[Date])
+		dataType: int64
+		formatString: 0
+		lineageTag: 4dae1ae5-016a-4231-8f14-644a0143dd0a
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Num' =
+			
+			WEEKNUM('Discharge Calendar'[Date])
+		dataType: int64
+		formatString: 0
+		lineageTag: 4268c53b-20a8-444e-94f8-85083469a70b
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Day' =
+			
+			WEEKDAY('Discharge Calendar'[Date])
+		dataType: int64
+		formatString: 0
+		lineageTag: 23684f9b-8aea-4b60-aa97-ebe54a62b0dc
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year =
+			
+			YEAR('Discharge Calendar'[Date])
+		dataType: int64
+		formatString: 0
+		lineageTag: 742f648f-3d73-4c25-a5bc-12d87392e959
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Name' =
+			
+			SWITCH(
+			    'Discharge Calendar'[Week Day],
+			    1, "Sunday",
+			    2, "Monday",
+			    3, "Tuesday",
+			    4, "Wednesday",
+			    5, "Thursday",
+			    6, "Friday",
+			    "Saturday"
+			)
+		dataType: string
+		lineageTag: b58bc549-1e6a-4c00-b6df-45ef3e836837
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name' =
+			
+			SWITCH(
+			    'Discharge Calendar'[Month],
+			    1, "January",
+			    2, "February",
+			    3, "March",
+			    4, "April",
+			    5, "May",
+			    6, "June",
+			    7, "July",
+			    8, "August",
+			    9, "September",
+			    10, "October",
+			    11, "November",
+			    "December"
+			)
+		dataType: string
+		lineageTag: e0d3b907-8b3e-4a96-b8a7-714933931d2a
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Discharge Calendar' = calculated
+		mode: import
+		source = CALENDARAUTO()
+
+	annotation PBI_Id = daac7b3f4f7349d4b97f465da9cf3520
+
